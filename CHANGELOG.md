@@ -27,7 +27,6 @@ and `PyString::to_string_lossy` [#642](https://github.com/PyO3/pyo3/pull/642).
 ### Fixed
 
  * Make sure the right Python interpreter is used in OSX builds. [#604](https://github.com/PyO3/pyo3/pull/604)
- * Patch specialization being broken by Rust 1.40. [#614](https://github.com/PyO3/pyo3/issues/614)
  * Fix a segfault around PyErr. [#597](https://github.com/PyO3/pyo3/pull/597)
 
 ## [0.8.0] - 2018-09-05

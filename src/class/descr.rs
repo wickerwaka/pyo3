@@ -72,10 +72,7 @@ pub trait PyDescrSetNameProtocol<'p>: PyDescrProtocol<'p> {
 trait PyDescrGetProtocolImpl {
     fn tp_descr_get() -> Option<ffi::descrgetfunc>;
 }
-impl<'p, T> PyDescrGetProtocolImpl for T
-where
-    T: PyDescrProtocol<'p>,
-{
+impl<'p, T> PyDescrGetProtocolImpl for T where T: PyDescrProtocol<'p> {
     default fn tp_descr_get() -> Option<ffi::descrgetfunc> {
         None
     }
@@ -98,10 +95,7 @@ where
 trait PyDescrSetProtocolImpl {
     fn tp_descr_set() -> Option<ffi::descrsetfunc>;
 }
-impl<'p, T> PyDescrSetProtocolImpl for T
-where
-    T: PyDescrProtocol<'p>,
-{
+impl<'p, T> PyDescrSetProtocolImpl for T where T: PyDescrProtocol<'p> {
     default fn tp_descr_set() -> Option<ffi::descrsetfunc> {
         None
     }

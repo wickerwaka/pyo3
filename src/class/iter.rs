@@ -66,10 +66,7 @@ trait PyIterIterProtocolImpl {
     fn tp_iter() -> Option<ffi::getiterfunc>;
 }
 
-impl<'p, T> PyIterIterProtocolImpl for T
-where
-    T: PyIterProtocol<'p>,
-{
+impl<'p, T> PyIterIterProtocolImpl for T where T: PyIterProtocol<'p> {
     default fn tp_iter() -> Option<ffi::getiterfunc> {
         None
     }
@@ -94,10 +91,7 @@ trait PyIterNextProtocolImpl {
     fn tp_iternext() -> Option<ffi::iternextfunc>;
 }
 
-impl<'p, T> PyIterNextProtocolImpl for T
-where
-    T: PyIterProtocol<'p>,
-{
+impl<'p, T> PyIterNextProtocolImpl for T where T: PyIterProtocol<'p> {
     default fn tp_iternext() -> Option<ffi::iternextfunc> {
         None
     }
