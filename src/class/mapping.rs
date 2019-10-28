@@ -114,11 +114,12 @@ pub trait PyMappingProtocolImpl {
     }
 }
 
-impl<T> PyMappingProtocolImpl for T {}
-
 impl<'p, T> PyMappingProtocolImpl for T
 where
-    T: PyMappingProtocol<'p>,
+    T: PyMappingProtocol<'p>
+        + PyMappingSetItemProtocolImpl
+        + PyMappingGetItemProtocolImpl
+        + PyMappingLenProtocolImpl,
 {
     #[inline]
     fn tp_as_mapping() -> Option<ffi::PyMappingMethods> {
@@ -153,13 +154,11 @@ where
     }
 }
 
-trait PyMappingLenProtocolImpl {
+pub trait PyMappingLenProtocolImpl {
     fn mp_length() -> Option<ffi::lenfunc> {
         None
     }
 }
-
-impl<'p, T> PyMappingLenProtocolImpl for T where T: PyMappingProtocol<'p> {}
 
 impl<T> PyMappingLenProtocolImpl for T
 where
@@ -171,13 +170,11 @@ where
     }
 }
 
-trait PyMappingGetItemProtocolImpl {
+pub trait PyMappingGetItemProtocolImpl {
     fn mp_subscript() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyMappingGetItemProtocolImpl for T where T: PyMappingProtocol<'p> {}
 
 impl<T> PyMappingGetItemProtocolImpl for T
 where
@@ -194,13 +191,11 @@ where
     }
 }
 
-trait PyMappingSetItemProtocolImpl {
+pub trait PyMappingSetItemProtocolImpl {
     fn mp_ass_subscript() -> Option<ffi::objobjargproc> {
         None
     }
 }
-
-impl<'p, T> PyMappingSetItemProtocolImpl for T where T: PyMappingProtocol<'p> {}
 
 impl<T> PyMappingSetItemProtocolImpl for T
 where
@@ -229,8 +224,6 @@ trait DelSetItemDispatch: Sized + for<'p> PyMappingDelItemProtocol<'p> {
     }
 }
 
-impl<T> DelSetItemDispatch for T where T: Sized + for<'p> PyMappingDelItemProtocol<'p> {}
-
 impl<T> DelSetItemDispatch for T
 where
     T: for<'p> PyMappingSetItemProtocol<'p> + for<'p> PyMappingDelItemProtocol<'p>,
@@ -246,6 +239,7 @@ where
     }
 }
 
+/* MJDFIXME
 impl<T> DeplItemDipatch for T
 where
     T: Sized + for<'p> PyMappingDelItemProtocol<'p>,
@@ -253,7 +247,7 @@ where
     fn mp_del_subscript() -> Option<ffi::objobjargproc> {
         <T as DelSetItemDispatch>::det_set_dispatch()
     }
-}
+}*/
 
 #[doc(hidden)]
 pub trait PyMappingContainsProtocolImpl {

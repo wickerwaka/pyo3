@@ -69,12 +69,11 @@ pub trait PyDescrSetNameProtocol<'p>: PyDescrProtocol<'p> {
     type Result: Into<PyResult<()>>;
 }
 
-trait PyDescrGetProtocolImpl {
+pub trait PyDescrGetProtocolImpl {
     fn tp_descr_get() -> Option<ffi::descrgetfunc> {
         None
     }
 }
-impl<'p, T> PyDescrGetProtocolImpl for T where T: PyDescrProtocol<'p> {}
 
 impl<T> PyDescrGetProtocolImpl for T
 where
@@ -90,12 +89,12 @@ where
     }
 }
 
-trait PyDescrSetProtocolImpl {
+pub trait PyDescrSetProtocolImpl {
     fn tp_descr_set() -> Option<ffi::descrsetfunc> {
         None
     }
 }
-impl<'p, T> PyDescrSetProtocolImpl for T where T: PyDescrProtocol<'p> {}
+
 impl<T> PyDescrSetProtocolImpl for T
 where
     T: for<'p> PyDescrSetProtocol<'p>,
@@ -133,11 +132,9 @@ pub trait PyDescrProtocolImpl {
     fn tp_as_descr(_type_object: &mut ffi::PyTypeObject) {}
 }
 
-impl<T> PyDescrProtocolImpl for T {}
-
 impl<'p, T> PyDescrProtocolImpl for T
 where
-    T: PyDescrProtocol<'p>,
+    T: PyDescrProtocol<'p> + PyDescrGetProtocolImpl + PyDescrSetProtocolImpl,
 {
     fn methods() -> Vec<PyMethodDef> {
         Vec::new()

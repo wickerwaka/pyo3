@@ -244,11 +244,12 @@ impl<'a, T> FromPyObject<'a> for Vec<T>
 where
     T: FromPyObject<'a>,
 {
-    default fn extract(obj: &'a PyAny) -> PyResult<Self> {
+    fn extract(obj: &'a PyAny) -> PyResult<Self> {
         extract_sequence(obj)
     }
 }
 
+/* MJDFIXME
 impl<'source, T> FromPyObject<'source> for Vec<T>
 where
     for<'a> T: FromPyObject<'a> + buffer::Element + Copy,
@@ -267,7 +268,7 @@ where
         // fall back to sequence protocol
         extract_sequence(obj)
     }
-}
+}*/
 
 fn extract_sequence<'s, T>(obj: &'s PyAny) -> PyResult<Vec<T>>
 where

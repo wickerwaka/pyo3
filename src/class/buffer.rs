@@ -46,11 +46,9 @@ pub trait PyBufferProtocolImpl {
     }
 }
 
-impl<T> PyBufferProtocolImpl for T {}
-
 impl<'p, T> PyBufferProtocolImpl for T
 where
-    T: PyBufferProtocol<'p>,
+    T: PyBufferProtocol<'p> + PyBufferGetBufferProtocolImpl,
 {
     #[inline]
     #[allow(clippy::needless_update)] // For python 2 it's not useless
@@ -63,13 +61,11 @@ where
     }
 }
 
-trait PyBufferGetBufferProtocolImpl {
+pub trait PyBufferGetBufferProtocolImpl {
     fn cb_bf_getbuffer() -> Option<ffi::getbufferproc> {
         None
     }
 }
-
-impl<'p, T> PyBufferGetBufferProtocolImpl for T where T: PyBufferProtocol<'p> {}
 
 impl<T> PyBufferGetBufferProtocolImpl for T
 where

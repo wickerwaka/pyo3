@@ -171,7 +171,7 @@ impl PyObject {
     /// This is equivalent to the Python expression 'self.attr_name'.
     pub fn getattr<N>(&self, py: Python, attr_name: N) -> PyResult<PyObject>
     where
-        N: ToPyObject,
+        N: ToPyObject + ToBorrowedObject,
     {
         attr_name.with_borrowed_ptr(py, |attr_name| unsafe {
             PyObject::from_owned_ptr_or_err(py, ffi::PyObject_GetAttr(self.as_ptr(), attr_name))

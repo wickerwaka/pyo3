@@ -358,7 +358,7 @@ impl<T> Py<T> {
 }
 
 /// Specialization workaround
-trait AsPyRefDispatch<T: PyTypeInfo>: AsPyPointer {
+pub trait AsPyRefDispatch<T: PyTypeInfo>: AsPyPointer {
     fn as_ref_dispatch(&self, _py: Python) -> &T {
         unsafe {
             let ptr = (self.as_ptr() as *mut u8).offset(T::OFFSET) as *mut T;
@@ -373,8 +373,6 @@ trait AsPyRefDispatch<T: PyTypeInfo>: AsPyPointer {
     }
 }
 
-impl<T: PyTypeInfo> AsPyRefDispatch<T> for Py<T> {}
-
 impl<T: PyTypeInfo + PyNativeType> AsPyRefDispatch<T> for Py<T> {
     fn as_ref_dispatch(&self, _py: Python) -> &T {
         unsafe { &*(self as *const instance::Py<T> as *const T) }
@@ -387,6 +385,7 @@ impl<T: PyTypeInfo + PyNativeType> AsPyRefDispatch<T> for Py<T> {
 impl<T> AsPyRef<T> for Py<T>
 where
     T: PyTypeInfo,
+    Py<T>: AsPyRefDispatch<T>,
 {
     #[inline]
     fn as_ref(&self, py: Python) -> PyRef<T> {
@@ -538,7 +537,7 @@ pub struct ManagedPyRef<'p, T: ToPyObject + ?Sized> {
 
 /// This should eventually be replaced with a generic `IntoPy` trait impl by figuring
 /// out the correct lifetime annotation to make the compiler happy
-impl<'p, T: ToPyObject> ManagedPyRef<'p, T> {
+impl<'p, T: ToPyObject + ManagedPyRefDispatch> ManagedPyRef<'p, T> {
     pub fn from_to_pyobject(py: Python<'p>, to_pyobject: &T) -> Self {
         to_pyobject.to_managed_py_ref(py)
     }
@@ -577,7 +576,6 @@ pub trait ManagedPyRefDispatch: ToPyObject {
 ///
 /// Note that the actual implementations are part of the trait declaration to avoid
 /// a specialization error
-impl<T: ToPyObject + ?Sized> ManagedPyRefDispatch for T {}
 
 /// Case 2: It's an object on the python heap, we're just storing a borrowed pointer.
 /// The object we're getting is an owned pointer, it might have it's own drop impl.
@@ -595,13 +593,14 @@ impl<T: ToPyObject + AsPyPointer + ?Sized> ManagedPyRefDispatch for T {
     fn drop_impl(_: &mut ManagedPyRef<T>) {}
 }
 
-impl<'p, T: ToPyObject + ?Sized> Drop for ManagedPyRef<'p, T> {
+/* MJDFIXME
+impl<'p, T: ToPyObject + ?Sized + AsPyPointer> Drop for ManagedPyRef<'p, T> {
     /// Uses the internal [ManagedPyRefDispatch] trait to get the right drop impl without causing
     /// a specialization error
     fn drop(&mut self) {
         ManagedPyRefDispatch::drop_impl(self);
     }
-}
+}*/
 
 #[cfg(test)]
 mod test {

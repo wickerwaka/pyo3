@@ -52,8 +52,6 @@ pub trait PyContextProtocolImpl {
     }
 }
 
-impl<T> PyContextProtocolImpl for T {}
-
 impl<'p, T> PyContextProtocolImpl for T
 where
     T: PyContextProtocol<'p>,

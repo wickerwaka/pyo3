@@ -638,11 +638,60 @@ pub trait PyNumberProtocolImpl: PyObjectProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberProtocolImpl for T {}
-
 impl<'p, T> PyNumberProtocolImpl for T
 where
-    T: PyNumberProtocol<'p>,
+    T: PyNumberProtocol<'p>
+        + PyNumberAbsProtocolImpl
+        + PyNumberAddProtocolImpl
+        + PyNumberAndProtocolImpl
+        + PyNumberComplexProtocolImpl
+        + PyNumberDivmodProtocolImpl
+        + PyNumberFloatProtocolImpl
+        + PyNumberFloordivProtocolImpl
+        + PyNumberIAddProtocolImpl
+        + PyNumberIAndProtocolImpl
+        + PyNumberIFloordivProtocolImpl
+        + PyNumberILShiftProtocolImpl
+        + PyNumberIMatmulProtocolImpl
+        + PyNumberIModProtocolImpl
+        + PyNumberIMulProtocolImpl
+        + PyNumberIOrProtocolImpl
+        + PyNumberIPowProtocolImpl
+        + PyNumberIRShiftProtocolImpl
+        + PyNumberISubProtocolImpl
+        + PyNumberITruedivProtocolImpl
+        + PyNumberIXorProtocolImpl
+        + PyNumberIndexProtocolImpl
+        + PyNumberIntProtocolImpl
+        + PyNumberInvertProtocolImpl
+        + PyNumberLShiftProtocolImpl
+        + PyNumberMatmulProtocolImpl
+        + PyNumberModProtocolImpl
+        + PyNumberMulProtocolImpl
+        + PyNumberNegProtocolImpl
+        + PyNumberOrProtocolImpl
+        + PyNumberPosProtocolImpl
+        + PyNumberPowProtocolImpl
+        + PyNumberRAddProtocolImpl
+        + PyNumberRAndProtocolImpl
+        + PyNumberRDivmodProtocolImpl
+        + PyNumberRFloordivProtocolImpl
+        + PyNumberRLShiftProtocolImpl
+        + PyNumberRMatmulProtocolImpl
+        + PyNumberRModProtocolImpl
+        + PyNumberRMulProtocolImpl
+        + PyNumberROrProtocolImpl
+        + PyNumberRPowProtocolImpl
+        + PyNumberRRShiftProtocolImpl
+        + PyNumberRShiftProtocolImpl
+        + PyNumberRSubProtocolImpl
+        + PyNumberRTruedivProtocolImpl
+        + PyNumberRXorProtocolImpl
+        + PyNumberRoundProtocolImpl
+        + PyNumberSubProtocolImpl
+        + PyNumberTruedivProtocolImpl
+        + PyNumberXorProtocolImpl
+        + PyObjectProtocolImpl,
 {
     fn tp_as_number() -> Option<ffi::PyNumberMethods> {
         Some(ffi::PyNumberMethods {
@@ -742,13 +791,11 @@ where
     }
 }
 
-trait PyNumberAddProtocolImpl {
+pub trait PyNumberAddProtocolImpl {
     fn nb_add() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberAddProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberAddProtocolImpl for T
 where
@@ -764,13 +811,11 @@ where
     }
 }
 
-trait PyNumberSubProtocolImpl {
+pub trait PyNumberSubProtocolImpl {
     fn nb_subtract() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberSubProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberSubProtocolImpl for T
 where
@@ -786,13 +831,11 @@ where
     }
 }
 
-trait PyNumberMulProtocolImpl {
+pub trait PyNumberMulProtocolImpl {
     fn nb_multiply() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberMulProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberMulProtocolImpl for T
 where
@@ -808,13 +851,11 @@ where
     }
 }
 
-trait PyNumberMatmulProtocolImpl {
+pub trait PyNumberMatmulProtocolImpl {
     fn nb_matrix_multiply() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberMatmulProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberMatmulProtocolImpl for T
 where
@@ -830,13 +871,11 @@ where
     }
 }
 
-trait PyNumberTruedivProtocolImpl {
+pub trait PyNumberTruedivProtocolImpl {
     fn nb_true_divide() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberTruedivProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberTruedivProtocolImpl for T
 where
@@ -852,13 +891,11 @@ where
     }
 }
 
-trait PyNumberFloordivProtocolImpl {
+pub trait PyNumberFloordivProtocolImpl {
     fn nb_floor_divide() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberFloordivProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberFloordivProtocolImpl for T
 where
@@ -874,13 +911,11 @@ where
     }
 }
 
-trait PyNumberModProtocolImpl {
+pub trait PyNumberModProtocolImpl {
     fn nb_remainder() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberModProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberModProtocolImpl for T
 where
@@ -896,13 +931,11 @@ where
     }
 }
 
-trait PyNumberDivmodProtocolImpl {
+pub trait PyNumberDivmodProtocolImpl {
     fn nb_divmod() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberDivmodProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberDivmodProtocolImpl for T
 where
@@ -918,13 +951,11 @@ where
     }
 }
 
-trait PyNumberPowProtocolImpl {
+pub trait PyNumberPowProtocolImpl {
     fn nb_power() -> Option<ffi::ternaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberPowProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberPowProtocolImpl for T
 where
@@ -940,13 +971,11 @@ where
     }
 }
 
-trait PyNumberLShiftProtocolImpl {
+pub trait PyNumberLShiftProtocolImpl {
     fn nb_lshift() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberLShiftProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberLShiftProtocolImpl for T
 where
@@ -962,13 +991,11 @@ where
     }
 }
 
-trait PyNumberRShiftProtocolImpl {
+pub trait PyNumberRShiftProtocolImpl {
     fn nb_rshift() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberRShiftProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberRShiftProtocolImpl for T
 where
@@ -984,13 +1011,11 @@ where
     }
 }
 
-trait PyNumberAndProtocolImpl {
+pub trait PyNumberAndProtocolImpl {
     fn nb_and() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberAndProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberAndProtocolImpl for T
 where
@@ -1006,13 +1031,11 @@ where
     }
 }
 
-trait PyNumberXorProtocolImpl {
+pub trait PyNumberXorProtocolImpl {
     fn nb_xor() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberXorProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberXorProtocolImpl for T
 where
@@ -1028,13 +1051,11 @@ where
     }
 }
 
-trait PyNumberOrProtocolImpl {
+pub trait PyNumberOrProtocolImpl {
     fn nb_or() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberOrProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberOrProtocolImpl for T
 where
@@ -1050,13 +1071,11 @@ where
     }
 }
 
-trait PyNumberIAddProtocolImpl {
+pub trait PyNumberIAddProtocolImpl {
     fn nb_inplace_add() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIAddProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIAddProtocolImpl for T
 where
@@ -1067,13 +1086,11 @@ where
     }
 }
 
-trait PyNumberISubProtocolImpl {
+pub trait PyNumberISubProtocolImpl {
     fn nb_inplace_subtract() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberISubProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberISubProtocolImpl for T
 where
@@ -1084,13 +1101,11 @@ where
     }
 }
 
-trait PyNumberIMulProtocolImpl {
+pub trait PyNumberIMulProtocolImpl {
     fn nb_inplace_multiply() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIMulProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIMulProtocolImpl for T
 where
@@ -1101,13 +1116,11 @@ where
     }
 }
 
-trait PyNumberIMatmulProtocolImpl {
+pub trait PyNumberIMatmulProtocolImpl {
     fn nb_inplace_matrix_multiply() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIMatmulProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIMatmulProtocolImpl for T
 where
@@ -1118,13 +1131,11 @@ where
     }
 }
 
-trait PyNumberITruedivProtocolImpl {
+pub trait PyNumberITruedivProtocolImpl {
     fn nb_inplace_true_divide() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberITruedivProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberITruedivProtocolImpl for T
 where
@@ -1135,13 +1146,11 @@ where
     }
 }
 
-trait PyNumberIFloordivProtocolImpl {
+pub trait PyNumberIFloordivProtocolImpl {
     fn nb_inplace_floor_divide() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIFloordivProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIFloordivProtocolImpl for T
 where
@@ -1152,13 +1161,11 @@ where
     }
 }
 
-trait PyNumberIModProtocolImpl {
+pub trait PyNumberIModProtocolImpl {
     fn nb_inplace_remainder() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIModProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIModProtocolImpl for T
 where
@@ -1169,13 +1176,11 @@ where
     }
 }
 
-trait PyNumberIPowProtocolImpl {
+pub trait PyNumberIPowProtocolImpl {
     fn nb_inplace_power() -> Option<ffi::ternaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIPowProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIPowProtocolImpl for T
 where
@@ -1186,13 +1191,11 @@ where
     }
 }
 
-trait PyNumberILShiftProtocolImpl {
+pub trait PyNumberILShiftProtocolImpl {
     fn nb_inplace_lshift() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberILShiftProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberILShiftProtocolImpl for T
 where
@@ -1203,13 +1206,11 @@ where
     }
 }
 
-trait PyNumberIRShiftProtocolImpl {
+pub trait PyNumberIRShiftProtocolImpl {
     fn nb_inplace_rshift() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIRShiftProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIRShiftProtocolImpl for T
 where
@@ -1220,13 +1221,11 @@ where
     }
 }
 
-trait PyNumberIAndProtocolImpl {
+pub trait PyNumberIAndProtocolImpl {
     fn nb_inplace_and() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIAndProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIAndProtocolImpl for T
 where
@@ -1237,13 +1236,11 @@ where
     }
 }
 
-trait PyNumberIXorProtocolImpl {
+pub trait PyNumberIXorProtocolImpl {
     fn nb_inplace_xor() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIXorProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIXorProtocolImpl for T
 where
@@ -1254,13 +1251,11 @@ where
     }
 }
 
-trait PyNumberIOrProtocolImpl {
+pub trait PyNumberIOrProtocolImpl {
     fn nb_inplace_or() -> Option<ffi::binaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIOrProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIOrProtocolImpl for T
 where
@@ -1397,13 +1392,11 @@ pub trait PyNumberROrProtocolImpl {
 
 impl<'p, T> PyNumberROrProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
-trait PyNumberNegProtocolImpl {
+pub trait PyNumberNegProtocolImpl {
     fn nb_negative() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberNegProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberNegProtocolImpl for T
 where
@@ -1420,13 +1413,11 @@ where
     }
 }
 
-trait PyNumberPosProtocolImpl {
+pub trait PyNumberPosProtocolImpl {
     fn nb_positive() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberPosProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberPosProtocolImpl for T
 where
@@ -1442,13 +1433,11 @@ where
     }
 }
 
-trait PyNumberAbsProtocolImpl {
+pub trait PyNumberAbsProtocolImpl {
     fn nb_absolute() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberAbsProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberAbsProtocolImpl for T
 where
@@ -1464,13 +1453,11 @@ where
     }
 }
 
-trait PyNumberInvertProtocolImpl {
+pub trait PyNumberInvertProtocolImpl {
     fn nb_invert() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberInvertProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberInvertProtocolImpl for T
 where
@@ -1486,13 +1473,11 @@ where
     }
 }
 
-trait PyNumberIntProtocolImpl {
+pub trait PyNumberIntProtocolImpl {
     fn nb_int() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIntProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIntProtocolImpl for T
 where
@@ -1508,13 +1493,11 @@ where
     }
 }
 
-trait PyNumberFloatProtocolImpl {
+pub trait PyNumberFloatProtocolImpl {
     fn nb_float() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberFloatProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberFloatProtocolImpl for T
 where
@@ -1530,13 +1513,11 @@ where
     }
 }
 
-trait PyNumberIndexProtocolImpl {
+pub trait PyNumberIndexProtocolImpl {
     fn nb_index() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyNumberIndexProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 impl<T> PyNumberIndexProtocolImpl for T
 where
@@ -1552,18 +1533,14 @@ where
     }
 }
 
-trait PyNumberComplexProtocolImpl {
+pub trait PyNumberComplexProtocolImpl {
     fn __complex__() -> Option<PyMethodDef> {
         None
     }
 }
 
-impl<'p, T> PyNumberComplexProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
-trait PyNumberRoundProtocolImpl {
+pub trait PyNumberRoundProtocolImpl {
     fn __round__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberRoundProtocolImpl for T where T: PyNumberProtocol<'p> {}

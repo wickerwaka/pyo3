@@ -47,11 +47,9 @@ pub trait PyIterProtocolImpl {
     fn tp_as_iter(_typeob: &mut ffi::PyTypeObject) {}
 }
 
-impl<T> PyIterProtocolImpl for T {}
-
 impl<'p, T> PyIterProtocolImpl for T
 where
-    T: PyIterProtocol<'p>,
+    T: PyIterProtocol<'p> + PyIterIterProtocolImpl + PyIterNextProtocolImpl,
 {
     #[inline]
     fn tp_as_iter(typeob: &mut ffi::PyTypeObject) {
@@ -60,13 +58,11 @@ where
     }
 }
 
-trait PyIterIterProtocolImpl {
+pub trait PyIterIterProtocolImpl {
     fn tp_iter() -> Option<ffi::getiterfunc> {
         None
     }
 }
-
-impl<'p, T> PyIterIterProtocolImpl for T where T: PyIterProtocol<'p> {}
 
 impl<T> PyIterIterProtocolImpl for T
 where
@@ -83,13 +79,11 @@ where
     }
 }
 
-trait PyIterNextProtocolImpl {
+pub trait PyIterNextProtocolImpl {
     fn tp_iternext() -> Option<ffi::iternextfunc> {
         None
     }
 }
-
-impl<'p, T> PyIterNextProtocolImpl for T where T: PyIterProtocol<'p> {}
 
 impl<T> PyIterNextProtocolImpl for T
 where

@@ -100,11 +100,12 @@ pub trait PyAsyncProtocolImpl {
     }
 }
 
-impl<T> PyAsyncProtocolImpl for T {}
-
 impl<'p, T> PyAsyncProtocolImpl for T
 where
-    T: PyAsyncProtocol<'p>,
+    T: PyAsyncProtocol<'p>
+        + PyAsyncAwaitProtocolImpl
+        + PyAsyncAiterProtocolImpl
+        + PyAsyncAnextProtocolImpl,
 {
     #[inline]
     fn tp_as_async() -> Option<ffi::PyAsyncMethods> {
@@ -130,13 +131,11 @@ where
     }
 }
 
-trait PyAsyncAwaitProtocolImpl {
+pub trait PyAsyncAwaitProtocolImpl {
     fn am_await() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyAsyncAwaitProtocolImpl for T where T: PyAsyncProtocol<'p> {}
 
 impl<T> PyAsyncAwaitProtocolImpl for T
 where
@@ -153,13 +152,11 @@ where
     }
 }
 
-trait PyAsyncAiterProtocolImpl {
+pub trait PyAsyncAiterProtocolImpl {
     fn am_aiter() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyAsyncAiterProtocolImpl for T where T: PyAsyncProtocol<'p> {}
 
 impl<T> PyAsyncAiterProtocolImpl for T
 where
@@ -176,13 +173,11 @@ where
     }
 }
 
-trait PyAsyncAnextProtocolImpl {
+pub trait PyAsyncAnextProtocolImpl {
     fn am_anext() -> Option<ffi::unaryfunc> {
         None
     }
 }
-
-impl<'p, T> PyAsyncAnextProtocolImpl for T where T: PyAsyncProtocol<'p> {}
 
 mod anext {
     use super::{PyAsyncAnextProtocol, PyAsyncAnextProtocolImpl};

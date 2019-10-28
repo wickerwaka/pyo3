@@ -537,11 +537,6 @@ fn configure(interpreter_config: &InterpreterConfig) -> Result<(String), String>
 }
 
 fn check_rustc_version() {
-    let channel = Channel::read().expect("Failed to determine rustc channel");
-    if !channel.supports_features() {
-        panic!("Error: pyo3 requires a nightly or dev version of Rust.");
-    }
-
     let actual_version = Version::read().expect("Failed to determine the rustc version");
     if !actual_version.at_least(MIN_VERSION) {
         panic!(

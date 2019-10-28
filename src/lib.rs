@@ -1,5 +1,3 @@
-#![feature(specialization)]
-
 //! Rust bindings to the Python interpreter.
 //!
 //! Look at [the guide](https://pyo3.rs/) for a detailed introduction.

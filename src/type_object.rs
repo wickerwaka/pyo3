@@ -2,6 +2,7 @@
 
 //! Python type object information
 
+use crate::class::gc::PyGCProtocolImpl;
 use crate::class::methods::PyMethodDefType;
 use crate::err::{PyErr, PyResult};
 use crate::instance::{Py, PyNativeType};
@@ -249,7 +250,19 @@ pub unsafe trait PyTypeObject {
 
 unsafe impl<T> PyTypeObject for T
 where
-    T: PyTypeInfo + PyMethodsProtocol + PyObjectAlloc,
+    T: PyTypeInfo
+        + PyMethodsProtocol
+        + PyObjectAlloc
+        + class::gc::PyGCProtocolImpl
+        + class::context::PyContextProtocolImpl
+        + class::descr::PyDescrProtocolImpl
+        + class::iter::PyIterProtocolImpl
+        + class::basic::PyObjectProtocolImpl
+        + class::number::PyNumberProtocolImpl
+        + class::mapping::PyMappingProtocolImpl
+        + class::sequence::PySequenceProtocolImpl
+        + class::pyasync::PyAsyncProtocolImpl
+        + class::buffer::PyBufferProtocolImpl,
 {
     fn init_type() -> NonNull<ffi::PyTypeObject> {
         let type_object = unsafe { <Self as PyTypeInfo>::type_object() };
@@ -297,7 +310,19 @@ impl<T> PyTypeCreate for T where T: PyObjectAlloc + PyTypeObject + Sized {}
 #[cfg(not(Py_LIMITED_API))]
 pub fn initialize_type<T>(py: Python, module_name: Option<&str>) -> PyResult<*mut ffi::PyTypeObject>
 where
-    T: PyObjectAlloc + PyTypeInfo + PyMethodsProtocol,
+    T: PyObjectAlloc
+        + PyTypeInfo
+        + PyMethodsProtocol
+        + class::gc::PyGCProtocolImpl
+        + class::context::PyContextProtocolImpl
+        + class::descr::PyDescrProtocolImpl
+        + class::iter::PyIterProtocolImpl
+        + class::basic::PyObjectProtocolImpl
+        + class::number::PyNumberProtocolImpl
+        + class::mapping::PyMappingProtocolImpl
+        + class::sequence::PySequenceProtocolImpl
+        + class::pyasync::PyAsyncProtocolImpl
+        + class::buffer::PyBufferProtocolImpl,
 {
     let type_object: &mut ffi::PyTypeObject = unsafe { T::type_object() };
     let base_type_object: &mut ffi::PyTypeObject =
@@ -438,12 +463,25 @@ fn py_class_flags<T: PyTypeInfo>(type_object: &mut ffi::PyTypeObject) {
     }
 }
 
-fn py_class_method_defs<T: PyMethodsProtocol>() -> (
+fn py_class_method_defs<T>() -> (
     Option<ffi::newfunc>,
     Option<ffi::initproc>,
     Option<ffi::PyCFunctionWithKeywords>,
     Vec<ffi::PyMethodDef>,
-) {
+)
+where
+    T: PyMethodsProtocol
+        + class::gc::PyGCProtocolImpl
+        + class::context::PyContextProtocolImpl
+        + class::descr::PyDescrProtocolImpl
+        + class::iter::PyIterProtocolImpl
+        + class::basic::PyObjectProtocolImpl
+        + class::number::PyNumberProtocolImpl
+        + class::mapping::PyMappingProtocolImpl
+        + class::sequence::PySequenceProtocolImpl
+        + class::pyasync::PyAsyncProtocolImpl
+        + class::buffer::PyBufferProtocolImpl,
+{
     let mut defs = Vec::new();
     let mut call = None;
     let mut new = None;
@@ -500,7 +538,9 @@ fn py_class_method_defs<T: PyMethodsProtocol>() -> (
     (new, init, call, defs)
 }
 
-fn py_class_async_methods<T>(defs: &mut Vec<ffi::PyMethodDef>) {
+fn py_class_async_methods<T: class::pyasync::PyAsyncProtocolImpl>(
+    defs: &mut Vec<ffi::PyMethodDef>,
+) {
     for def in <T as class::pyasync::PyAsyncProtocolImpl>::methods() {
         defs.push(def.as_method_def());
     }
