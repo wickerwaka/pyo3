@@ -1,3 +1,4 @@
+use pyo3::class;
 use pyo3::prelude::*;
 use pyo3::py_run;
 use pyo3::type_object::initialize_type;
@@ -6,6 +7,17 @@ mod common;
 
 #[pyclass]
 struct EmptyClass {}
+
+impl class::gc::PyGCProtocolImpl for EmptyClass {}
+impl class::buffer::PyBufferProtocolImpl for EmptyClass {}
+impl class::context::PyContextProtocolImpl for EmptyClass {}
+impl class::iter::PyIterProtocolImpl for EmptyClass {}
+impl class::descr::PyDescrProtocolImpl for EmptyClass {}
+impl class::basic::PyObjectProtocolImpl for EmptyClass {}
+impl class::number::PyNumberProtocolImpl for EmptyClass {}
+impl class::mapping::PyMappingProtocolImpl for EmptyClass {}
+impl class::sequence::PySequenceProtocolImpl for EmptyClass {}
+impl class::pyasync::PyAsyncProtocolImpl for EmptyClass {}
 
 #[test]
 fn empty_class() {
@@ -17,7 +29,7 @@ fn empty_class() {
 
     py_assert!(py, typeobj, "typeobj.__name__ == 'EmptyClass'");
 }
-
+/*
 /// Line1
 ///Line2
 ///  Line3
@@ -77,4 +89,4 @@ fn empty_class_in_module() {
     initialize_type::<EmptyClassInModule>(py, Some("test_module.nested")).unwrap();
     let module: String = ty.getattr("__module__").unwrap().extract().unwrap();
     assert_eq!(module, "test_module.nested");
-}
+}*/

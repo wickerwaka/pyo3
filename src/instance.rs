@@ -602,6 +602,7 @@ impl<'p, T: ToPyObject + ?Sized + AsPyPointer> Drop for ManagedPyRef<'p, T> {
     }
 }*/
 
+/* MJDFIXME
 #[cfg(test)]
 mod test {
     use crate::ffi;
@@ -640,4 +641,4 @@ mod test {
             ffi::Py_DECREF(ptr);
         }
     }
-}
+}*/
