@@ -5,7 +5,7 @@ use pyo3::type_object::initialize_type;
 
 mod common;
 
-#[pyclass]
+#[pyclass(protocols=[PySequenceProtocol])]
 struct EmptyClass {}
 
 impl class::gc::PyGCProtocolImpl for EmptyClass {}

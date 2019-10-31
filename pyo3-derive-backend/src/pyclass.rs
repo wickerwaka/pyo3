@@ -16,6 +16,7 @@ pub struct PyClassArgs {
     pub flags: Vec<syn::Expr>,
     pub base: syn::TypePath,
     pub module: Option<syn::LitStr>,
+    pub protocols: Vec<syn::Ident>,
 }
 
 impl Parse for PyClassArgs {
@@ -40,6 +41,7 @@ impl Default for PyClassArgs {
             // are no other flags
             flags: vec![parse_quote! {0}],
             base: parse_quote! {pyo3::types::PyAny},
+            protocols: Vec::new(),
         }
     }
 }
@@ -107,6 +109,36 @@ impl PyClassArgs {
                     return Err(syn::Error::new_spanned(
                         *assign.right.clone(),
                         "Wrong format for module",
+                    ));
+                }
+            },
+            "protocols" => match *assign.right {
+                syn::Expr::Array(syn::ExprArray { ref elems, .. }) => {
+                    for elem in elems.iter() {
+                        match elem {
+                            syn::Expr::Path(syn::ExprPath { ref path, .. }) => {
+                                if path.segments.len() == 1 {
+                                    self.protocols.push(path.segments[0].ident.clone());
+                                } else {
+                                    return Err(syn::Error::new_spanned(
+                                        path.clone(),
+                                        "Expected an unqualified name for protocol",
+                                    ));
+                                }
+                            }
+                            _ => {
+                                return Err(syn::Error::new_spanned(
+                                    elem.clone(),
+                                    "Wrong format for protocol entry",
+                                ));
+                            }
+                        }
+                    }
+                }
+                _ => {
+                    return Err(syn::Error::new_spanned(
+                        *assign.right.clone(),
+                        "Wrong format for protocol",
                     ));
                 }
             },
