@@ -7,12 +7,22 @@ pub struct Proto {
     pub py_methods: &'static [PyMethod],
 }
 
+impl Proto {
+    pub fn protocol_trait(&self) -> String {
+        format!("Py{}Protocol", self.name)
+    }
+
+    pub fn _impl_trait(&self) -> String {
+        format!("Py{}ProtocolImpl", self.name)
+    }
+}
+
 pub struct PyMethod {
     pub name: &'static str,
     pub proto: &'static str,
 }
 
-pub const OBJECT: Proto = Proto {
+const OBJECT: Proto = Proto {
     name: "Object",
     methods: &[
         MethodProto::Binary {
@@ -88,7 +98,7 @@ pub const OBJECT: Proto = Proto {
     ],
 };
 
-pub const ASYNC: Proto = Proto {
+const ASYNC: Proto = Proto {
     name: "Async",
     methods: &[
         MethodProto::Unary {
@@ -131,7 +141,7 @@ pub const ASYNC: Proto = Proto {
     ],
 };
 
-pub const BUFFER: Proto = Proto {
+const BUFFER: Proto = Proto {
     name: "Buffer",
     methods: &[
         MethodProto::Unary {
@@ -148,7 +158,7 @@ pub const BUFFER: Proto = Proto {
     py_methods: &[],
 };
 
-pub const CONTEXT: Proto = Proto {
+const CONTEXT: Proto = Proto {
     name: "Context",
     methods: &[
         MethodProto::Unary {
@@ -176,7 +186,7 @@ pub const CONTEXT: Proto = Proto {
     ],
 };
 
-pub const GC: Proto = Proto {
+const GC: Proto = Proto {
     name: "GC",
     methods: &[
         MethodProto::Free {
@@ -191,7 +201,7 @@ pub const GC: Proto = Proto {
     py_methods: &[],
 };
 
-pub const DESCR: Proto = Proto {
+const DESCR: Proto = Proto {
     name: "Descriptor",
     methods: &[
         MethodProto::Ternary {
@@ -233,7 +243,7 @@ pub const DESCR: Proto = Proto {
     ],
 };
 
-pub const ITER: Proto = Proto {
+const ITER: Proto = Proto {
     name: "Iter",
     py_methods: &[],
     methods: &[
@@ -250,7 +260,7 @@ pub const ITER: Proto = Proto {
     ],
 };
 
-pub const MAPPING: Proto = Proto {
+const MAPPING: Proto = Proto {
     name: "Mapping",
     methods: &[
         MethodProto::Unary {
@@ -310,7 +320,7 @@ pub const MAPPING: Proto = Proto {
     ],
 };
 
-pub const SEQ: Proto = Proto {
+const SEQ: Proto = Proto {
     name: "Sequence",
     methods: &[
         MethodProto::Unary {
@@ -371,7 +381,7 @@ pub const SEQ: Proto = Proto {
     py_methods: &[],
 };
 
-pub const NUM: Proto = Proto {
+const NUM: Proto = Proto {
     name: "Number",
     methods: &[
         MethodProto::BinaryS {
@@ -750,3 +760,13 @@ pub const NUM: Proto = Proto {
         },
     ],
 };
+
+const PROTOCOLS: &[Proto] = &[
+    OBJECT, ASYNC, MAPPING, ITER, CONTEXT, SEQ, NUM, DESCR, BUFFER, GC,
+];
+
+pub fn find_protocol(protocol_trait: &str) -> Option<&'static Proto> {
+    PROTOCOLS
+        .iter()
+        .find(|p| p.protocol_trait() == protocol_trait)
+}

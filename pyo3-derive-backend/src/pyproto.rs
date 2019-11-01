@@ -12,18 +12,9 @@ use quote::ToTokens;
 pub fn build_py_proto(ast: &mut syn::ItemImpl) -> syn::Result<TokenStream> {
     if let Some((_, ref mut path, _)) = ast.trait_ {
         let proto = if let Some(ref mut segment) = path.segments.last() {
-            match segment.ident.to_string().as_str() {
-                "PyObjectProtocol" => &defs::OBJECT,
-                "PyAsyncProtocol" => &defs::ASYNC,
-                "PyMappingProtocol" => &defs::MAPPING,
-                "PyIterProtocol" => &defs::ITER,
-                "PyContextProtocol" => &defs::CONTEXT,
-                "PySequenceProtocol" => &defs::SEQ,
-                "PyNumberProtocol" => &defs::NUM,
-                "PyDescrProtocol" => &defs::DESCR,
-                "PyBufferProtocol" => &defs::BUFFER,
-                "PyGCProtocol" => &defs::GC,
-                _ => {
+            match defs::find_protocol(segment.ident.to_string().as_str()) {
+                Some(p) => p,
+                None => {
                     return Err(syn::Error::new_spanned(
                         path,
                         "#[pyproto] can not be used with this block",
