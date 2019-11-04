@@ -422,8 +422,7 @@ fn impl_class(
             }
         }
 
-        //impl<T: pyo3::type_object::PyTypeInfo> pyo3::AsPyRefDispatch<T> for #cls {}
-        //impl pyo3::ManagedPyRefDispatch for #cls {}
+        impl pyo3::AsPyRefDispatch<#cls> for Py<#cls> {}
 
         #inventory_impl
 
