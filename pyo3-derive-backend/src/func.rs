@@ -12,17 +12,20 @@ pub enum MethodProto {
     Free {
         name: &'static str,
         proto: &'static str,
+        default: &'static str,
     },
     Unary {
         name: &'static str,
         pyres: bool,
         proto: &'static str,
+        default: &'static str,
     },
     Binary {
         name: &'static str,
         arg: &'static str,
         pyres: bool,
         proto: &'static str,
+        default: &'static str,
     },
     BinaryS {
         name: &'static str,
@@ -30,6 +33,7 @@ pub enum MethodProto {
         arg2: &'static str,
         pyres: bool,
         proto: &'static str,
+        default: &'static str,
     },
     Ternary {
         name: &'static str,
@@ -37,6 +41,7 @@ pub enum MethodProto {
         arg2: &'static str,
         pyres: bool,
         proto: &'static str,
+        default: &'static str,
     },
     TernaryS {
         name: &'static str,
@@ -45,6 +50,7 @@ pub enum MethodProto {
         arg3: &'static str,
         pyres: bool,
         proto: &'static str,
+        default: &'static str,
     },
     Quaternary {
         name: &'static str,
@@ -52,6 +58,7 @@ pub enum MethodProto {
         arg2: &'static str,
         arg3: &'static str,
         proto: &'static str,
+        default: &'static str,
     },
 }
 
@@ -65,6 +72,31 @@ impl PartialEq<str> for MethodProto {
             MethodProto::Ternary { name: n, .. } => n == name,
             MethodProto::TernaryS { name: n, .. } => n == name,
             MethodProto::Quaternary { name: n, .. } => n == name,
+        }
+    }
+}
+
+impl MethodProto {
+    pub fn get_proto(&self) -> &'static str {
+        match *self {
+            MethodProto::Free { proto: p, .. } => p,
+            MethodProto::Unary { proto: p, .. } => p,
+            MethodProto::Binary { proto: p, .. } => p,
+            MethodProto::BinaryS { proto: p, .. } => p,
+            MethodProto::Ternary { proto: p, .. } => p,
+            MethodProto::TernaryS { proto: p, .. } => p,
+            MethodProto::Quaternary { proto: p, .. } => p,
+        }
+    }
+    pub fn get_default(&self) -> &'static str {
+        match *self {
+            MethodProto::Free { default: d, .. } => d,
+            MethodProto::Unary { default: d, .. } => d,
+            MethodProto::Binary { default: d, .. } => d,
+            MethodProto::BinaryS { default: d, .. } => d,
+            MethodProto::Ternary { default: d, .. } => d,
+            MethodProto::TernaryS { default: d, .. } => d,
+            MethodProto::Quaternary { default: d, .. } => d,
         }
     }
 }
@@ -119,6 +151,7 @@ pub fn impl_method_proto(
             arg,
             pyres,
             proto,
+            default: _,
         } => {
             if sig.inputs.len() <= 1 {
                 println!("Not enough arguments for {}", name);
@@ -164,6 +197,7 @@ pub fn impl_method_proto(
             arg2,
             pyres,
             proto,
+            default: _,
         } => {
             if sig.inputs.len() <= 1 {
                 print_err(format!("Not enough arguments {}", name), quote!(sig));
@@ -213,6 +247,7 @@ pub fn impl_method_proto(
             arg2,
             pyres,
             proto,
+            default: _,
         } => {
             if sig.inputs.len() <= 2 {
                 print_err(format!("Not enough arguments {}", name), quote!(sig));
@@ -266,6 +301,7 @@ pub fn impl_method_proto(
             arg3,
             pyres,
             proto,
+            default: _,
         } => {
             if sig.inputs.len() <= 2 {
                 print_err(format!("Not enough arguments {}", name), quote!(sig));
@@ -322,6 +358,7 @@ pub fn impl_method_proto(
             arg2,
             arg3,
             proto,
+            default: _,
         } => {
             if sig.inputs.len() <= 3 {
                 print_err(format!("Not enough arguments {}", name), quote!(sig));

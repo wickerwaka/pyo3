@@ -7,7 +7,7 @@ use std::ffi::CStr;
 use std::os::raw::{c_int, c_void};
 use std::ptr;
 
-#[pyclass]
+#[pyclass(protocols=[PyBufferProtocol])]
 struct TestClass {
     vec: Vec<u8>,
 }

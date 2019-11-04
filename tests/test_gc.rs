@@ -132,7 +132,7 @@ fn create_pointers_in_drop() {
 }
 
 #[allow(dead_code)]
-#[pyclass]
+#[pyclass(protocols=[PyGCProtocol])]
 struct GCIntegration {
     self_ref: RefCell<PyObject>,
     dropped: TestDropCall,
@@ -177,7 +177,7 @@ fn gc_integration() {
     assert!(drop_called.load(Ordering::Relaxed));
 }
 
-#[pyclass(gc)]
+#[pyclass(gc, protocols=[PyGCProtocol])]
 struct GCIntegration2 {}
 
 #[pyproto]

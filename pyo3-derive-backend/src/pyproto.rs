@@ -1,7 +1,7 @@
 // Copyright (c) 2017-present PyO3 Project and Contributors
 
 use crate::defs;
-use crate::func::impl_method_proto;
+use crate::func::{impl_method_proto, MethodProto};
 use crate::method::FnSpec;
 use crate::pymethod;
 use proc_macro2::Span;
@@ -53,49 +53,70 @@ fn impl_proto_impl(
     let mut tokens = TokenStream::new();
     let mut py_methods = Vec::new();
 
+    let mut unimpl_methods: Vec<&MethodProto> = proto.methods.iter().collect();
+    let mut unimpl_py_methods: Vec<&defs::PyMethod> = proto.py_methods.iter().collect();
+
     for iimpl in impls.iter_mut() {
         if let syn::ImplItem::Method(ref mut met) = iimpl {
-            for m in proto.methods {
-                if m == met.sig.ident.to_string().as_str() {
-                    impl_method_proto(ty, &mut met.sig, m).to_tokens(&mut tokens);
-                }
-            }
-            for m in proto.py_methods {
-                let ident = met.sig.ident.clone();
-                if m.name == ident.to_string().as_str() {
-                    let name = syn::Ident::new(m.name, Span::call_site());
-                    let proto: syn::Path = syn::parse_str(m.proto).unwrap();
+            let method_name = met.sig.ident.to_string();
+            // Find the method in unimpl_methods, remove it and implement it
+            unimpl_methods
+                .iter()
+                .position(|m| *m == method_name.as_str())
+                .map(|idx| {
+                    let method = unimpl_methods.swap_remove(idx);
+                    impl_method_proto(ty, &mut met.sig, method).to_tokens(&mut tokens);
+                });
 
-                    let fn_spec = match FnSpec::parse(&ident, &met.sig, &mut met.attrs) {
-                        Ok(fn_spec) => fn_spec,
-                        Err(err) => return err.to_compile_error(),
-                    };
-                    let meth = pymethod::impl_proto_wrap(ty, &ident, &fn_spec);
+            // MJDFIXME - undo this change
+            let py_method_name = &met.sig.ident;
+            let method = unimpl_py_methods
+                .iter()
+                .position(|m| m.name == py_method_name.to_string().as_str())
+                .map(|idx| unimpl_py_methods.swap_remove(idx));
 
-                    py_methods.push(quote! {
-                        impl #proto for #ty
-                        {
-                            #[inline]
-                            fn #name() -> Option<pyo3::class::methods::PyMethodDef> {
-                                #meth
+            if let Some(m) = method {
+                let name = syn::Ident::new(m.name, Span::call_site());
+                let proto: syn::Path = syn::parse_str(m.proto).unwrap();
 
-                                Some(pyo3::class::PyMethodDef {
-                                    ml_name: stringify!(#name),
-                                    ml_meth: pyo3::class::PyMethodType::PyCFunctionWithKeywords(__wrap),
-                                    ml_flags: pyo3::ffi::METH_VARARGS | pyo3::ffi::METH_KEYWORDS,
-                                    ml_doc: ""
-                                })
-                            }
+                let fn_spec = match FnSpec::parse(&py_method_name, &met.sig, &mut met.attrs) {
+                    Ok(fn_spec) => fn_spec,
+                    Err(err) => return err.to_compile_error(),
+                };
+                let meth = pymethod::impl_proto_wrap(ty, &py_method_name, &fn_spec);
+
+                py_methods.push(quote! {
+                    impl #proto for #ty
+                    {
+                        #[inline]
+                        fn #name() -> Option<pyo3::class::methods::PyMethodDef> {
+                            #meth
+
+                            Some(pyo3::class::PyMethodDef {
+                                ml_name: stringify!(#name),
+                                ml_meth: pyo3::class::PyMethodType::PyCFunctionWithKeywords(__wrap),
+                                ml_flags: pyo3::ffi::METH_VARARGS | pyo3::ffi::METH_KEYWORDS,
+                                ml_doc: ""
+                            })
                         }
-                    });
-                }
-            }
+                    }
+                });
+            };
         }
     }
 
+    let default_impls: Vec<_> = unimpl_methods
+        .iter()
+        .map(|m| {
+            let proto: syn::Path = syn::parse_str(m.get_default()).unwrap();
+            quote! { impl #proto for #ty {} }
+        })
+        .collect();
     quote! {
         #tokens
 
         #(#py_methods)*
+
+        #(#default_impls)*
     }
 }

@@ -1,10 +1,10 @@
 // Copyright (c) 2017-present PyO3 Project and Contributors
-
+use crate::defs;
 use crate::method::{FnArg, FnSpec, FnType};
 use crate::pymethod::{impl_py_getter_def, impl_py_setter_def, impl_wrap_getter, impl_wrap_setter};
 use crate::utils;
 use proc_macro2::{Span, TokenStream};
-use quote::quote;
+use quote::{format_ident, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::{parse_quote, Expr, Token};
@@ -326,6 +326,14 @@ fn impl_class(
         extra
     };
 
+    let extra = {
+        let default_impls = impl_default_protocols(&cls, &attr);
+        quote! {
+            #default_impls
+            #extra
+        }
+    };
+
     // insert space for weak ref
     let mut has_weakref = false;
     let mut has_dict = false;
@@ -413,6 +421,9 @@ fn impl_class(
                 pyo3::IntoPy::into_py(pyo3::Py::new(py, self).unwrap(), py)
             }
         }
+
+        //impl<T: pyo3::type_object::PyTypeInfo> pyo3::AsPyRefDispatch<T> for #cls {}
+        //impl pyo3::ManagedPyRefDispatch for #cls {}
 
         #inventory_impl
 
@@ -530,4 +541,23 @@ fn check_generics(class: &mut syn::ItemStruct) -> syn::Result<()> {
             "#[pyclass] cannot have generic parameters",
         ))
     }
+}
+
+fn impl_default_protocols(cls: &syn::Ident, attr: &PyClassArgs) -> TokenStream {
+    let impls: Vec<TokenStream> = defs::all_protocols()
+        .iter()
+        .filter_map(|proto| {
+            if attr
+                .protocols
+                .iter()
+                .any(|x| proto.protocol_trait.ends_with(&x.to_string()))
+            {
+                None
+            } else {
+                let impl_trait: syn::Path = syn::parse_str(proto.impl_trait).unwrap();
+                Some(quote! { impl #impl_trait for #cls {} })
+            }
+        })
+        .collect();
+    quote! { #(#impls)* }
 }

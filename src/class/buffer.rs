@@ -91,3 +91,9 @@ where
         Some(wrap::<T>)
     }
 }
+
+pub trait PyBufferReleaseBufferProtocolImpl {
+    fn cb_bf_releasebuffer() -> Option<ffi::releasebufferproc> {
+        None
+    }
+}

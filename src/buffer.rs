@@ -710,8 +710,9 @@ mod test {
     fn test_array_buffer() {
         let gil = Python::acquire_gil();
         let py = gil.python();
-        let array = py
-            .import("array")
+        let arr = py.import("array");
+        println!("{:?}", arr);
+        let array = arr
             .unwrap()
             .call_method("array", ("f", (1.0, 1.5, 2.0, 2.5)), None)
             .unwrap();

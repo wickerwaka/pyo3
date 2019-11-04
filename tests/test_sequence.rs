@@ -6,7 +6,7 @@ use pyo3::types::IntoPyDict;
 use pyo3::types::PyAny;
 use pyo3::types::PyList;
 
-#[pyclass]
+#[pyclass(protocols=[PySequenceProtocol])]
 struct ByteSequence {
     elements: Vec<u8>,
 }

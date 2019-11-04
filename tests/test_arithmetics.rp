@@ -8,7 +8,7 @@ use pyo3::types::PyAny;
 
 mod common;
 
-#[pyclass]
+#[pyclass(protocols=[PyNumberProtocol])]
 struct UnaryArithmetic {}
 
 #[pyproto]
@@ -42,7 +42,7 @@ fn unary_arithmetic() {
     py_run!(py, c, "assert ~c == 'invert'");
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyNumberProtocol, PyObjectProtocol])]
 struct BinaryArithmetic {}
 
 #[pyproto]
@@ -52,7 +52,7 @@ impl PyObjectProtocol for BinaryArithmetic {
     }
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyNumberProtocol, PyObjectProtocol])]
 struct InPlaceOperations {
     value: u32,
 }
@@ -188,7 +188,7 @@ fn binary_arithmetic() {
     py_run!(py, c, "assert 1 | c == '1 | BA'");
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyNumberProtocol])]
 struct RhsArithmetic {}
 
 #[pyproto]
@@ -210,7 +210,7 @@ fn rhs_arithmetic() {
     // py_run!(py, c, "assert 1 + c == '1 + RA'");
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyObjectProtocol])]
 struct RichComparisons {}
 
 #[pyproto]
@@ -231,7 +231,7 @@ impl PyObjectProtocol for RichComparisons {
     }
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyObjectProtocol])]
 struct RichComparisons2 {}
 
 #[pyproto]
