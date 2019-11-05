@@ -1273,16 +1273,12 @@ pub trait PyNumberRAddProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberRAddProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
 #[doc(hidden)]
 pub trait PyNumberRSubProtocolImpl {
     fn __rsub__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberRSubProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait PyNumberRMulProtocolImpl {
@@ -1291,16 +1287,12 @@ pub trait PyNumberRMulProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberRMulProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
 #[doc(hidden)]
 pub trait PyNumberRMatmulProtocolImpl {
     fn __rmatmul__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberRMatmulProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait PyNumberRTruedivProtocolImpl {
@@ -1309,16 +1301,12 @@ pub trait PyNumberRTruedivProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberRTruedivProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
 #[doc(hidden)]
 pub trait PyNumberRFloordivProtocolImpl {
     fn __rfloordiv__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberRFloordivProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait PyNumberRModProtocolImpl {
@@ -1327,16 +1315,12 @@ pub trait PyNumberRModProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberRModProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
 #[doc(hidden)]
 pub trait PyNumberRDivmodProtocolImpl {
     fn __rdivmod__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberRDivmodProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait PyNumberRPowProtocolImpl {
@@ -1345,16 +1329,12 @@ pub trait PyNumberRPowProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberRPowProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
 #[doc(hidden)]
 pub trait PyNumberRLShiftProtocolImpl {
     fn __rlshift__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberRLShiftProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait PyNumberRRShiftProtocolImpl {
@@ -1363,16 +1343,12 @@ pub trait PyNumberRRShiftProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberRRShiftProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
 #[doc(hidden)]
 pub trait PyNumberRAndProtocolImpl {
     fn __rand__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberRAndProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait PyNumberRXorProtocolImpl {
@@ -1381,16 +1357,12 @@ pub trait PyNumberRXorProtocolImpl {
     }
 }
 
-impl<'p, T> PyNumberRXorProtocolImpl for T where T: PyNumberProtocol<'p> {}
-
 #[doc(hidden)]
 pub trait PyNumberROrProtocolImpl {
     fn __ror__() -> Option<PyMethodDef> {
         None
     }
 }
-
-impl<'p, T> PyNumberROrProtocolImpl for T where T: PyNumberProtocol<'p> {}
 
 pub trait PyNumberNegProtocolImpl {
     fn nb_negative() -> Option<ffi::unaryfunc> {

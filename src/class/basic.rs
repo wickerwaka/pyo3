@@ -166,13 +166,15 @@ pub trait PyObjectProtocolImpl {
 impl<'p, T> PyObjectProtocolImpl for T
 where
     T: PyObjectProtocol<'p>
-        + PyObjectSetAttrProtocol<'p>
         + GetAttrProtocolImpl
         + StrProtocolImpl
         + ReprProtocolImpl
         + HashProtocolImpl
         + RichcmpProtocolImpl
         + BoolProtocolImpl
+        + FormatProtocolImpl
+        + BytesProtocolImpl
+        + UnicodeProtocolImpl
         + tp_setattro_impl::DelAttr
         + tp_setattro_impl::SetAttr
         + tp_setattro_impl::SetDelAttr,
@@ -253,7 +255,7 @@ where
 /// and may support deleting attributes (by implementing PyObjectDelAttrProtocol)
 /// and we need to generate a single extern c function that supports only setting, only deleting
 /// or both, and return None in case none of the two is supported.
-mod tp_setattro_impl {
+pub mod tp_setattro_impl {
     use super::*;
 
     /// setattrofunc PyTypeObject.tp_setattro
@@ -314,6 +316,9 @@ mod tp_setattro_impl {
         }
     }
 
+    impl<T> SetDelAttr for T {}
+
+    /* MJDFIXME
     impl<T> SetDelAttr for T
     where
         T: for<'p> PyObjectSetAttrProtocol<'p> + for<'p> PyObjectDelAttrProtocol<'p>,
@@ -327,7 +332,7 @@ mod tp_setattro_impl {
                 __delattr__
             )
         }
-    }
+    } */
 }
 
 pub trait StrProtocolImpl {
@@ -376,7 +381,6 @@ pub trait FormatProtocolImpl {
         None
     }
 }
-impl<'p, T> FormatProtocolImpl for T where T: PyObjectProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait BytesProtocolImpl {
@@ -384,7 +388,6 @@ pub trait BytesProtocolImpl {
         None
     }
 }
-impl<'p, T> BytesProtocolImpl for T where T: PyObjectProtocol<'p> {}
 
 #[doc(hidden)]
 pub trait UnicodeProtocolImpl {
@@ -392,7 +395,6 @@ pub trait UnicodeProtocolImpl {
         None
     }
 }
-impl<'p, T> UnicodeProtocolImpl for T where T: PyObjectProtocol<'p> {}
 
 pub trait HashProtocolImpl {
     fn tp_hash() -> Option<ffi::hashfunc> {

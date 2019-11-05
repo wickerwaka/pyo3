@@ -1,5 +1,3 @@
-#![feature(specialization)]
-
 use pyo3::class::basic::CompareOp;
 use pyo3::class::*;
 use pyo3::prelude::*;
@@ -16,7 +14,6 @@ impl PyNumberProtocol for UnaryArithmetic {
     fn __neg__(&self) -> PyResult<&'static str> {
         Ok("neg")
     }
-
     fn __pos__(&self) -> PyResult<&'static str> {
         Ok("pos")
     }
