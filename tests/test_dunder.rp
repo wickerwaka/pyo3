@@ -1,5 +1,3 @@
-#![feature(specialization)]
-
 use pyo3::class::{
     PyContextProtocol, PyIterProtocol, PyMappingProtocol, PyObjectProtocol, PySequenceProtocol,
 };
@@ -14,7 +12,7 @@ use std::{isize, iter};
 
 mod common;
 
-#[pyclass]
+#[pyclass(protocols=[PyMappingProtocol])]
 pub struct Len {
     l: usize,
 }
@@ -48,7 +46,7 @@ fn len() {
     py_expect_exception!(py, inst, "len(inst)", OverflowError);
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyIterProtocol])]
 struct Iterator {
     iter: Box<dyn iter::Iterator<Item = i32> + Send>,
 }
@@ -80,7 +78,7 @@ fn iterator() {
     py_assert!(py, inst, "list(inst) == [5, 6, 7]");
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyObjectProtocol])]
 struct StringMethods {}
 
 #[pyproto]
@@ -120,7 +118,7 @@ struct Comparisons {
     val: i32,
 }
 
-#[pyproto]
+#[pyproto(protocols=[PyObjectProtocol])]
 impl PyObjectProtocol for Comparisons {
     fn __hash__(&self) -> PyResult<isize> {
         Ok(self.val as isize)
@@ -147,7 +145,7 @@ fn comparisons() {
     py_assert!(py, zero, "not zero");
 }
 
-#[pyclass]
+#[pyclass(protocols=[PySequenceProtocol])]
 #[derive(Debug)]
 struct Sequence {
     fields: Vec<String>,
@@ -232,7 +230,7 @@ fn callable() {
     py_assert!(py, nc, "not callable(nc)");
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyMappingProtocol])]
 struct SetItem {
     key: i32,
     val: i32,
@@ -259,7 +257,7 @@ fn setitem() {
     py_expect_exception!(py, c, "del c[1]", NotImplementedError);
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyMappingProtocol])]
 struct DelItem {
     key: i32,
 }
@@ -283,7 +281,7 @@ fn delitem() {
     py_expect_exception!(py, c, "c[1] = 2", NotImplementedError);
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyMappingProtocol])]
 struct SetDelItem {
     val: Option<i32>,
 }
@@ -313,7 +311,7 @@ fn setdelitem() {
     assert_eq!(c.val, None);
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyMappingProtocol])]
 struct Reversed {}
 
 #[pyproto]
@@ -353,7 +351,7 @@ fn contains() {
     py_expect_exception!(py, c, "assert 'wrong type' not in c", TypeError);
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyContextProtocol])]
 struct ContextManager {
     exit_called: bool,
 }
@@ -416,7 +414,7 @@ fn test_basics() {
     assert_eq!(5, indices.slicelength);
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyMappingProtocol])]
 struct Test {}
 
 #[pyproto]
@@ -498,7 +496,7 @@ fn weakref_dunder_dict_support() {
     );
 }
 
-#[pyclass]
+#[pyclass(protocols=[PyObjectProtocol])]
 struct ClassWithGetAttr {
     #[pyo3(get, set)]
     data: u32,

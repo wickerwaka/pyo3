@@ -9,6 +9,8 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use quote::ToTokens;
 
+use std::collections::HashSet;
+
 pub fn build_py_proto(ast: &mut syn::ItemImpl) -> syn::Result<TokenStream> {
     if let Some((_, ref mut path, _)) = ast.trait_ {
         let proto = if let Some(ref mut segment) = path.segments.last() {
@@ -52,6 +54,7 @@ fn impl_proto_impl(
 ) -> TokenStream {
     let mut tokens = TokenStream::new();
     let mut py_methods = Vec::new();
+    let mut implemented = HashSet::new();
 
     let mut unimpl_methods: Vec<&MethodProto> = proto.methods.iter().collect();
     let mut unimpl_py_methods: Vec<&defs::PyMethod> = proto.py_methods.iter().collect();
@@ -59,6 +62,7 @@ fn impl_proto_impl(
     for iimpl in impls.iter_mut() {
         if let syn::ImplItem::Method(ref mut met) = iimpl {
             let method_name = met.sig.ident.to_string();
+            implemented.insert(method_name.clone());
             // Find the method in unimpl_methods, remove it and implement it
             unimpl_methods
                 .iter()
@@ -105,13 +109,18 @@ fn impl_proto_impl(
         }
     }
 
-    let default_impls: Vec<_> = unimpl_methods
+    let default_impls: Vec<_> = proto
+        .default_impls
         .iter()
-        .map(|m| {
-            let proto: syn::Path = syn::parse_str(m.get_default()).unwrap();
-            quote! { impl #proto for #ty {} }
+        .filter_map(|def| match implemented.contains(def.name) {
+            true => None,
+            false => {
+                let proto: syn::Path = syn::parse_str(def.default).unwrap();
+                Some(quote! { impl #proto for #ty {} })
+            }
         })
         .collect();
+
     quote! {
         #tokens
 
